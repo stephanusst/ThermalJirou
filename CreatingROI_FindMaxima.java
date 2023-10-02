@@ -8,11 +8,14 @@ public class CreatingROI_FindMaxima implements PlugIn {
 
 	static String title="Maxima";
 	int prominence=10;
+	GenericDialog gd;
 
 	public void run(String arg) {
 		//B. Image
 		//B.1. Need Opened Image
-		ImagePlus imp = IJ.getImage();
+		ImagePlus imp;
+  	        //IJ.run(imp, "IJ webcam plugin", "camera=[S0-40 0] width=1280 height=960 unit=�m pixel_size=2.00000000 interval=1000 frames=3 process");
+		imp = IJ.getImage();
 
 		//B.1. Automatically Opened
         		//ImagePlus imp = IJ.openImage("I:/ImageJ/plugins/Workspace/_images/SnapDada.tif");
@@ -21,41 +24,38 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		//B.2. Initial
 		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 
-		/*
+		
 		ImageProcessor ip=imp.getProcessor();
-                                ip.snapshot(); //Makes a copy of this image's pixel data that can be later restored using reset() or reset(mask).
+                                //ip.snapshot(); //Makes a copy of this image's pixel data that can be later restored using reset() or reset(mask).
 
 		DialogListener listener = new DialogListener(){
 		 public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
-            		  double gamma = gd.getNextNumber();
-            		  ip.reset();
-            		  ip.gamma(gamma);
-            		  imp.setProcessor(ip);
-            		  gd.repaint();
+	  		  prominence=(int)gd.getNextNumber();
+	  		  IJ.run(imp, "Select None", "");
+		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+			  imp.updateAndDraw();
             		  return true;
       	 	  }
 		};
-		
 
-      		GenericDialog gd = new GenericDialog("Gamma Adjuster");
-      		gd.addImage(imp);
-      		gd.addSlider("Gamma:", 0.05, 5.0, 1);
+      		gd = new GenericDialog("Prominence Adjuster");
+
+      		//gd.addImage(imp);
+		gd.addSlider("Prominence", 10, 99, 30);
      		gd.addDialogListener(listener);
       		gd.showDialog();
-		*/
-
 		
+		/*
 		//C. Threshold
 		//IJ.setAutoThreshold(imp, "Default dark");
 		//D. Selection
-		//IJ.run(imp, "Create Selection", "");
 		IJ.run(imp, "Select None", "");
 		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 		imp.updateAndDraw();
 
 		//E. Find Maxima
 		//A. Dialog
-		GenericDialog gd;
+		//GenericDialog gd;
 		gd = new GenericDialog("Find Maxima");
 		gd.addStringField("Title: ", title);
     		//gd.addImage(imp);
@@ -81,6 +81,7 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		  IJ.run(imp, "Select None", "");
 		  IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 		}
+		*/
 
 	}
 }
