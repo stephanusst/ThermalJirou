@@ -21,7 +21,7 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		//B.2. Initial
 		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 
-		/*
+		
 		ImageProcessor ip=imp.getProcessor();
                                 ip.snapshot(); //Makes a copy of this image's pixel data that can be later restored using reset() or reset(mask).
 
@@ -42,9 +42,9 @@ public class CreatingROI_FindMaxima implements PlugIn {
       		gd.addSlider("Gamma:", 0.05, 5.0, 1);
      		gd.addDialogListener(listener);
       		gd.showDialog();
-		*/
-
 		
+
+		/*
 		//C. Threshold
 		//IJ.setAutoThreshold(imp, "Default dark");
 		//D. Selection
@@ -81,7 +81,7 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		  IJ.run(imp, "Select None", "");
 		  IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 		}
-
+		*/
 	}
 }
 
