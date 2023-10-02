@@ -4,7 +4,7 @@ import ij.gui.*;
 import java.awt.*;
 import ij.plugin.*;
 
-public class CreatingROI_FindMaxima implements PlugIn {
+public class CreatingROI_FindMaxima2 implements PlugIn {
 
 	static String title="Maxima";
 	int prominence=10;
@@ -18,28 +18,30 @@ public class CreatingROI_FindMaxima implements PlugIn {
         		//ImagePlus imp = IJ.openImage("I:/ImageJ/plugins/Workspace/_images/SnapDada.tif");
 		//imp.show();
 		IJ.run(imp, "16-bit", "");
+
 		//B.2. Initial
 		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 
-		
 		ImageProcessor ip=imp.getProcessor();
                                 ip.snapshot(); //Makes a copy of this image's pixel data that can be later restored using reset() or reset(mask).
 
 		DialogListener listener = new DialogListener(){
 		 public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
-            		  double gamma = gd.getNextNumber();
-            		  ip.reset();
-            		  ip.gamma(gamma);
-            		  imp.setProcessor(ip);
-            		  gd.repaint();
+		  	prominence=(int)gd.getNextNumber();
+		  	IJ.run(imp, "Select None", "");
+		  	IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+            		  //double gamma = gd.getNextNumber();
+            		  //ip.reset();
+            		  //ip.gamma(gamma);
+            		  //imp.setProcessor(ip);
+            		  //gd.repaint();
             		  return true;
       	 	  }
 		};
 		
-
-      		GenericDialog gd = new GenericDialog("Gamma Adjuster");
-      		gd.addImage(imp);
-      		gd.addSlider("Gamma:", 0.05, 5.0, 1);
+      		GenericDialog gd = new GenericDialog("Titik Terpanas");
+      		//gd.addImage(imp);
+      		gd.addSlider("Prominence:", 10, 99, 1);
      		gd.addDialogListener(listener);
       		gd.showDialog();
 		
@@ -75,6 +77,7 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		//ip.fill(); 	
 
 		imp.updateAndDraw();
+
 		while (!gd.wasCanceled()) {
 	  	  gd.showDialog();
 		  prominence=(int)gd.getNextNumber();
