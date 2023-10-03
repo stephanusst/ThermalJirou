@@ -33,8 +33,8 @@ public class CreatingROI_FindMaxima implements PlugIn {
 
 		DialogListener listener = new DialogListener(){
 		 public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
-			  //IJ.setAutoThreshold(imp, "Mean Dark");
-   			  //IJ.run(imp, "Create Selection", "");
+			  IJ.setAutoThreshold(imp, "Mean Dark");
+   			  IJ.run(imp, "Create Selection", "");
 			  //RoiManager rm = RoiManager.getRoiManager();
 			  //ThresholdToSelection ts= new ThresholdToSelection(ip);
 
@@ -42,12 +42,13 @@ public class CreatingROI_FindMaxima implements PlugIn {
 			  //rm.select(0);
 			  //roiManager("Select", 0);
 
+			  IJ.resetThreshold(imp);
 	  		  prominence=(int)gd.getNextNumber();
 	  		  IJ.run(imp, "Select None", "");
 		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 			  IJ.run(imp, "Fire", "");
 			  imp.updateAndDraw();
-			  IJ.log("listener");
+			  //IJ.log("listener");
             		  return true;
       	 	  }
 		};
