@@ -5,6 +5,10 @@ import java.awt.*;
 import ij.plugin.*;
 import ij.plugin.filter.*;
 
+/******************************************************
+ Find Maxima
+2023/10/03 Tambah Lookup table "Fire"
+*******************************************************/
 public class CreatingROI_FindMaxima implements PlugIn {
 
 	static String title="Maxima";
@@ -15,16 +19,15 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		//B. Image
 		//B.1. Need Opened Image
 		ImagePlus imp;
-		//IJ.run(imp, "IJ webcam plugin", "camera=[S0-40 0] width=1280 height=960 unit=�m pixel_size=2.00000000 interval=1000 frames=3 process");
 		imp = IJ.getImage();
 
 		//B.1. Automatically Opened
-		//ImagePlus imp = IJ.openImage("I:/ImageJ/plugins/Workspace/_images/SnapDada.tif");
-		//imp.show();
 		IJ.run(imp, "16-bit", "");
+	        IJ.run(imp, "Fire", "");
 
 		//B.2. Initial
 		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+
 		ImageProcessor ip=imp.getProcessor();
 		ip.snapshot(); //Makes a copy of this image's pixel data that can be later restored using reset() or reset(mask).
 
@@ -42,6 +45,7 @@ public class CreatingROI_FindMaxima implements PlugIn {
 	  		  prominence=(int)gd.getNextNumber();
 	  		  IJ.run(imp, "Select None", "");
 		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+			  IJ.run(imp, "Fire", "");
 			  imp.updateAndDraw();
 			  IJ.log("listener");
             		  return true;
@@ -49,12 +53,11 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		};
 
       		gd = new NonBlockingGenericDialog("Prominence Adjuster");
-      		//gd.addImage(imp);
 		gd.addSlider("Prominence", 10, 99, 30, 2);
      		gd.addDialogListener(listener);
       		gd.showDialog();
 		IJ.log("Run End");
-		
+
 		/*
 		//C. Threshold
 		//IJ.setAutoThreshold(imp, "Default dark");
@@ -68,8 +71,6 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		//GenericDialog gd;
 		gd = new GenericDialog("Find Maxima");
 		gd.addStringField("Title: ", title);
-    		//gd.addImage(imp);
-		//gd.addNumericField("Prominence: ", prominence,0);
 		gd.addSlider("Prominence", 1,99, 10);
 		gd.showDialog();
 		if (gd.wasCanceled()) return;
@@ -93,7 +94,6 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		  IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 		}
 		*/
-
 	}
 }
 
