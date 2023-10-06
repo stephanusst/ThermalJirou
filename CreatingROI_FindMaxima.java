@@ -1,3 +1,4 @@
+/* 2023-10-06 Ubah steps dialog utk prominence menjadi 1*/
 import ij.*;
 import ij.process.*;
 import ij.gui.*;
@@ -22,7 +23,7 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		imp = IJ.getImage();
 
 		//B.1. Automatically Opened
-		IJ.run(imp, "16-bit", "");
+		IJ.run(imp, "8-bit", "");
 	        IJ.run(imp, "Fire", "");
 
 		//B.2. Initial
@@ -33,8 +34,8 @@ public class CreatingROI_FindMaxima implements PlugIn {
 
 		DialogListener listener = new DialogListener(){
 		 public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
-			  IJ.setAutoThreshold(imp, "Mean Dark");
-   			  IJ.run(imp, "Create Selection", "");
+			  //IJ.setAutoThreshold(imp, "Mean Dark");
+   			  //IJ.run(imp, "Create Selection", "");
 			  //RoiManager rm = RoiManager.getRoiManager();
 			  //ThresholdToSelection ts= new ThresholdToSelection(ip);
 
@@ -42,11 +43,13 @@ public class CreatingROI_FindMaxima implements PlugIn {
 			  //rm.select(0);
 			  //roiManager("Select", 0);
 
-			  IJ.resetThreshold(imp);
+			  //IJ.resetThreshold(imp);
 	  		  prominence=(int)gd.getNextNumber();
 	  		  IJ.run(imp, "Select None", "");
-		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+			  IJ.run(imp, "8-bit", "");
 			  IJ.run(imp, "Fire", "");
+		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+			  //IJ.run(imp, "Fire", "");
 			  imp.updateAndDraw();
 			  //IJ.log("listener");
             		  return true;
@@ -54,10 +57,10 @@ public class CreatingROI_FindMaxima implements PlugIn {
 		};
 
       		gd = new NonBlockingGenericDialog("Prominence Adjuster");
-		gd.addSlider("Prominence", 10, 99, 30, 2);
+		gd.addSlider("Prominence", 10, 99, 30, 1);
      		gd.addDialogListener(listener);
       		gd.showDialog();
-		IJ.log("Run End");
+		//IJ.log("Run End");
 
 		/*
 		//C. Threshold
