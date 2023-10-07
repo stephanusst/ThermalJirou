@@ -47,6 +47,7 @@ public class CreatingROI_FindMaxima implements PlugIn {
 	  		  prominence=(int)gd.getNextNumber();
 	  		  IJ.run(imp, "Select None", "");
 			  IJ.run(imp, "8-bit", "");
+
 			  IJ.run(imp, "Fire", "");
 		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 			  //IJ.run(imp, "Fire", "");
@@ -58,6 +59,7 @@ public class CreatingROI_FindMaxima implements PlugIn {
 
       		gd = new NonBlockingGenericDialog("Prominence Adjuster");
 		gd.addSlider("Prominence", 10, 99, 30, 1);
+
      		gd.addDialogListener(listener);
       		gd.showDialog();
 		//IJ.log("Run End");
