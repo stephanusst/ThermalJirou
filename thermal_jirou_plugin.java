@@ -184,9 +184,9 @@ public class thermal_jirou_plugin implements PlugIn {
 						int size = imp.getWidth() / 4;
 						ImageRoi roi = new ImageRoi(0, 0, ip.resize(size, size * ip.getHeight() / ip.getWidth()));
 						imp.setOverlay(roi, Color.BLACK, 1, Color.BLACK);
-
 					} 
 					*/
+
 					//else
 						 {
 	

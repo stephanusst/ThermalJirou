@@ -24,7 +24,6 @@ public class CreatingROI_FindMaxima implements PlugIn {
 
 		//B.1. Automatically Opened
 		IJ.run(imp, "8-bit", "");
-	        IJ.run(imp, "Fire", "");
 
 		//B.2. Initial
 		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
@@ -34,72 +33,18 @@ public class CreatingROI_FindMaxima implements PlugIn {
 
 		DialogListener listener = new DialogListener(){
 		 public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
-			  //IJ.setAutoThreshold(imp, "Mean Dark");
-   			  //IJ.run(imp, "Create Selection", "");
-			  //RoiManager rm = RoiManager.getRoiManager();
-			  //ThresholdToSelection ts= new ThresholdToSelection(ip);
-
-			  //rm.addRoi(roi);
-			  //rm.select(0);
-			  //roiManager("Select", 0);
-
-			  //IJ.resetThreshold(imp);
 	  		  prominence=(int)gd.getNextNumber();
-	  		  IJ.run(imp, "Select None", "");
-			  IJ.run(imp, "8-bit", "");
-
-			  IJ.run(imp, "Fire", "");
 		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-			  //IJ.run(imp, "Fire", "");
 			  imp.updateAndDraw();
-			  //IJ.log("listener");
             		  return true;
       	 	  }
 		};
 
+		//
       		gd = new NonBlockingGenericDialog("Prominence Adjuster");
 		gd.addSlider("Prominence", 10, 99, 30, 1);
-
      		gd.addDialogListener(listener);
       		gd.showDialog();
-		//IJ.log("Run End");
-
-		/*
-		//C. Threshold
-		//IJ.setAutoThreshold(imp, "Default dark");
-		//D. Selection
-		IJ.run(imp, "Select None", "");
-		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-		imp.updateAndDraw();
-
-		//E. Find Maxima
-		//A. Dialog
-		//GenericDialog gd;
-		gd = new GenericDialog("Find Maxima");
-		gd.addStringField("Title: ", title);
-		gd.addSlider("Prominence", 1,99, 10);
-		gd.showDialog();
-		if (gd.wasCanceled()) return;
-		prominence=(int)gd.getNextNumber();
-		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-  
-		//F. ImageProcessor
-		//ImageProcessor ip = imp.getProcessor(); 
-		// fill a rectangular region with 255 (on grayscale this is white color):  
-		//Roi roi = new Roi(30, 40, 100, 100); // x, y, width, height of the rectangle  
-		//ip.setRoi(roi);  
-		//ip.setValue(255);  
-		//ip.fill(); 	
-
-		imp.updateAndDraw();
-
-		while (!gd.wasCanceled()) {
-	  	  gd.showDialog();
-		  prominence=(int)gd.getNextNumber();
-		  IJ.run(imp, "Select None", "");
-		  IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-		}
-		*/
 	}
 }
 
