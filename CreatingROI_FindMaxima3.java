@@ -8,6 +8,7 @@ import ij.gui.*;
 import java.awt.*;
 import ij.plugin.*;
 import ij.plugin.filter.*;
+import ij.text.TextPanel;
 
 /******************************************************
  Find Maxima
@@ -16,8 +17,11 @@ import ij.plugin.filter.*;
 public class CreatingROI_FindMaxima3 implements PlugIn {
 
 	static String title="Maxima";
-	int prominence=10;
 	GenericDialog gd;
+	TextPanel tp;
+	String macro="Kosong";
+	int prominence = 20;
+	int u, v, p;
 
 	public void run(String arg) {
 		//B. Image
@@ -32,31 +36,40 @@ public class CreatingROI_FindMaxima3 implements PlugIn {
 		IJ.run(imp, "Create Selection", "");
 
 		//B.2. Initial
+	
 		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 		IJ.resetThreshold(imp);
 
 		ImageProcessor ip=imp.getProcessor();
 		ip.snapshot(); //Makes a copy of this image's pixel data that can be later restored using reset() or reset(mask).
 
+		
 		DialogListener listener = new DialogListener(){
 		 public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
-			  IJ.setAutoThreshold(imp, "Default dark no-reset");
-   			  IJ.run(imp, "Create Selection", "");
+			  IJ.run(imp, "8-bit", "");
+			  //IJ.setAutoThreshold(imp, "Default dark no-reset");
+   			  //IJ.run(imp, "Create Selection", "");
 
 	  		  prominence=(int)gd.getNextNumber();
 		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+			  IJ.resetThreshold(imp);
+			  //ip.drawString(String.valueOf(prominence),30,40);
+			  //u=30;v=30;
+			  //p=ip.getPixel(u,v);
+		          //IJ.log(String.valueOf(p));
+			  IJ.run("Fire");
 			  imp.updateAndDraw();
             		  return true;
       	 	  }
 		};
 
       		gd = new NonBlockingGenericDialog("Prominence Adjuster");
-		gd.addSlider("Prominence", 10, 99, prominence, 1);
-
+		gd.addSlider("Prominence", 1, 99, prominence, 1);
      		gd.addDialogListener(listener);
-      		gd.showDialog();
+		gd.showDialog();		
 		//IJ.log("Run End");
 
+		
 		/*
 		//C. Threshold
 		//D. Selection

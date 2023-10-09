@@ -239,7 +239,7 @@ public class thermal_jirou_plugin implements PlugIn {
 						//IJ.showStatus("Thermal Jirou");
 
 						imp.updateAndDraw();
-
+						//IJ.showStatus("100");
 						Prefs.set("Cam.newImage", true);
 						
 						//Default Run
