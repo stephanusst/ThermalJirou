@@ -1,6 +1,9 @@
 /****************************************************** 
-2023-10-06 Ubah steps dialog utk prominence menjadi 1
+Thermal Jirou Plug In.
+Find Maxima 
 2022-10-08 Ditambahkan AutoThreshold 
+2023-10-06 Ubah steps dialog utk prominence menjadi 1
+2023/10/03 Tambah Lookup table "Fire"
 *******************************************************/
 import ij.*;
 import ij.process.*;
@@ -8,32 +11,33 @@ import ij.gui.*;
 import java.awt.*;
 import ij.plugin.*;
 import ij.plugin.filter.*;
+
+//Trial
 import ij.text.TextPanel;
 
-/******************************************************
- Find Maxima
-2023/10/03 Tambah Lookup table "Fire"
-*******************************************************/
 public class CreatingROI_FindMaxima3 implements PlugIn {
 
 	static String title="Maxima";
 	GenericDialog gd;
 	TextPanel tp;
 	String macro="Kosong";
-	int prominence = 20;
+	int prominence = 14;
 	int u, v, p;
 
 	public void run(String arg) {
-		//B. Image
+
+		////////////////B. Image /////////////////////////////
+
 		//B.1. Need Opened Image
 		ImagePlus imp;
 		imp = IJ.getImage();
 
 		//B.1. Automatically Opened
 		IJ.run(imp, "8-bit", "");
+		IJ.run("Jet");
 
-	  	IJ.setAutoThreshold(imp, "Default dark no-reset");
-		IJ.run(imp, "Create Selection", "");
+	  	//IJ.setAutoThreshold(imp, "Default dark no-reset");
+		//IJ.run(imp, "Create Selection", "");
 
 		//B.2. Initial
 	
@@ -47,17 +51,20 @@ public class CreatingROI_FindMaxima3 implements PlugIn {
 		DialogListener listener = new DialogListener(){
 		 public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
 			  IJ.run(imp, "8-bit", "");
+
 			  //IJ.setAutoThreshold(imp, "Default dark no-reset");
    			  //IJ.run(imp, "Create Selection", "");
 
 	  		  prominence=(int)gd.getNextNumber();
 		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-			  IJ.resetThreshold(imp);
+			  //IJ.resetThreshold(imp);
+
 			  //ip.drawString(String.valueOf(prominence),30,40);
 			  //u=30;v=30;
 			  //p=ip.getPixel(u,v);
 		          //IJ.log(String.valueOf(p));
-			  IJ.run("Fire");
+
+			  IJ.run("Jet");
 			  imp.updateAndDraw();
             		  return true;
       	 	  }

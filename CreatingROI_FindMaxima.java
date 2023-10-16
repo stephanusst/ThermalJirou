@@ -42,7 +42,7 @@ public class CreatingROI_FindMaxima implements PlugIn {
 
 		//
       		gd = new NonBlockingGenericDialog("Prominence Adjuster");
-		gd.addSlider("Prominence", 10, 99, 30, 1);
+		gd.addSlider("Prominence", 1, 99, prominence, 1);
      		gd.addDialogListener(listener);
       		gd.showDialog();
 	}
