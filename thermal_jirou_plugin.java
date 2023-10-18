@@ -1,4 +1,6 @@
-/* 2023-10-06 Tambah Fire*/
+/* 2023-10-06 Tambah Fire
+ * 2023-10-10 Ubah menjadi JET
+ */
 import ij.IJ; 					//Static Utility Methods
 import ij.ImagePlus;				//An ImagePlus contain an ImageProcessor (2D image) or an ImageStack (3D, 4D or 5D image).
 import ij.ImageStack;				//This class represents an expandable array of images.
@@ -115,7 +117,7 @@ public class thermal_jirou_plugin implements PlugIn {
 		//4. Running Dialog and geth the camID. 
 		//   boolean showDialog()
 		if (!showDialog())
-		  return;			//Cancel 							//Ok.
+		  return;			 							
 		camera = Webcam.getWebcams().get(camID);
 
 		//5. Jika kamera ada, maka dilanjutkan
@@ -194,14 +196,14 @@ public class thermal_jirou_plugin implements PlugIn {
 						imp2.setImage(image);
 						
  						
-						IJ.run(imp2,"8-bit","");
+						//IJ.run(imp2,"8-bit","");
 						//if (grab){
 							//IJ.log("grab");
 							//break;
 						//	IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");							
 						//}
 						//IJ.run(imp2, "16 Colors", "");
-						IJ.run(imp2, "Fire", "");
+						//IJ.run(imp2, "Fire", "");
 
 						ip = imp2.getProcessor();
 						
@@ -219,7 +221,8 @@ public class thermal_jirou_plugin implements PlugIn {
 									imp2.saveRoi();
 							}
 							imp.setProcessor(ip);
-							if (doMacro) imp.restoreRoi();
+							if (doMacro) 
+								imp.restoreRoi();
 							imp.updateAndDraw();
 						}
 
@@ -238,7 +241,7 @@ public class thermal_jirou_plugin implements PlugIn {
 						}
 						//IJ.showStatus("Thermal Jirou");
 
-						imp.updateAndDraw();
+						//imp.updateAndDraw();
 						//IJ.showStatus("100");
 						Prefs.set("Cam.newImage", true);
 						
