@@ -194,14 +194,14 @@ public class thermal_jirou_plugin implements PlugIn {
 						imp2.setImage(image);
 						
  						
-						IJ.run(imp2,"8-bit","");
+						//IJ.run(imp2,"8-bit","");
 						//if (grab){
 							//IJ.log("grab");
 							//break;
 						//	IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");							
 						//}
 						//IJ.run(imp2, "16 Colors", "");
-						IJ.run(imp2, "Fire", "");
+						//IJ.run(imp2, "Fire", "");
 
 						ip = imp2.getProcessor();
 						
