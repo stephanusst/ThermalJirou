@@ -1,17 +1,13 @@
-/* @modif Stephanus Tandjung
-   @date 2023 10 25 Versi yang bisa jalan dengan baik bilamana memakai Macro:
-              run("16-bit");
-              run("Jet");
- * @date 2023 10 06 Jet
- * @date 2023 10 10 Fire
+/* 2023-10-06 Tambah Fire
+ * 2023-10-10 Ubah menjadi JET
  */
-import ij.IJ;					//Static Utility Methods
-import ij.ImagePlus;			//An ImagePlus contain an ImageProcessor (2D image) or an ImageStack (3D, 4D or 5D image).
+import ij.IJ; 				//Static Utility Methods
+import ij.ImagePlus;				//An ImagePlus contain an ImageProcessor (2D image) or an ImageStack (3D, 4D or 5D image).
 import ij.ImageStack;			//This class represents an expandable array of images.
 import ij.Macro;				//This class contains static methods that perform macro operations.
 import ij.Prefs;				//This class contains the ImageJ preferences, which are loaded from the "IJ_Props.txt" and "IJ_Prefs.txt" files.
-import ij.WindowManager;		//This class consists of static methods used to manage ImageJ's windows.
-import ij.gui.GenericDialog;	//This class is a customizable modal dialog box. Here is an example GenericDialog with one string field and two numeric fields:
+import ij.WindowManager;			//This class consists of static methods used to manage ImageJ's windows.
+import ij.gui.GenericDialog;		//This class is a customizable modal dialog box. Here is an example GenericDialog with one string field and two numeric fields:
 import ij.gui.ImageRoi;
 
 import ij.macro.Interpreter;
@@ -20,6 +16,9 @@ import ij.measure.Calibration;
 import ij.plugin.PlugIn;
 
 import ij.process.ColorProcessor;
+import ij.process.ShortProcessor;
+import ij.process.ByteProcessor;
+
 import ij.process.FHT;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
@@ -32,7 +31,7 @@ import java.awt.image.ColorModel;
 
 import java.util.Calendar;
 
-import com.github.sarxos.webcam.Webcam;					//https://github.com/sarxos/webcam-capture
+import com.github.sarxos.webcam.Webcam;				//https://github.com/sarxos/webcam-capture
 import com.github.sarxos.webcam.WebcamDiscoveryService;
 
 import ij.LookUpTable;
@@ -53,15 +52,17 @@ import ij.LookUpTable;
  * @date 2015 09 14 fixed a bug when timelapse would start despite of user
  *       setting
  * @date 2016 05 18 added an option to display live FFT spectrum with image
- *       inset 
- * 640x480um (640x480);RGB;1.2MB
+ *       inset
+ * @modif Stephanus Tandjung
+ * @date 2023 09 25 
+* 640x480um (640x480);RGB;1.2MB
  ******************************************************************************/
 
-public class thermal_jirou_plugin implements PlugIn {
+public class thermal_jirou_plugin_02 implements PlugIn {
 
 	/////////////// Variables/////////////////////////
-	Webcam camera;					//The camera
-	BufferedImage image;			//The image
+	Webcam camera;
+	BufferedImage image;
 
 	ImagePlus imp;
 	ImagePlus imp2;
@@ -101,10 +102,10 @@ public class thermal_jirou_plugin implements PlugIn {
 	/* 512 x 392um (256x196)
 	/****************************************************/
 	public void run(String s) {
-
+		IJ.beep();
 		//1. Get the Camera
 		camera = Webcam.getDefault();
-		
+
 		//2. Check availability 
 		if (null == camera) {
 	  	  return;
@@ -120,46 +121,34 @@ public class thermal_jirou_plugin implements PlugIn {
 		//4. Running Dialog and get the camID. 
 		//   boolean showDialog()
 		if (!showDialog())
-		  return;			 							
+		  return;	
+		 							
 		camera = Webcam.getWebcams().get(camID);
 
-		IJ.log(Integer.toString(camID));
+		//IJ.log(Integer.toString(camID));
 
 		//5. Jika kamera ada, maka dilanjutkan
 		if (null != camera) {
 			//IJ.log("Camera tidak Null");
-			Dimension[] sizes = camera.getViewSizes();	//640x480
-			Dimension s1 = sizes[sizes.length - 1];
-			
+			Dimension[] sizes = camera.getViewSizes();
+			Dimension s1 = sizes[sizes.length - 1];		
 			camera.close();
-			if (customSize && (width > 0) && (height > 0)) {
-				Dimension[] customSizes = new Dimension[1];
-				customSizes[0] = new Dimension(width, height);
-				camera.setCustomViewSizes(customSizes);
-				s1 = customSizes[0];
-
-				IJ.log(String.valueOf(s1.getWidth()));
-				IJ.log(String.valueOf(s1.getHeight()));
-			}
-
 			camera.setViewSize(s1);
 			camera.open();
 
 			//Images
-			ip = new ColorProcessor(s1.width, s1.height);
+			ip = new ByteProcessor(s1.width, s1.height);
 			imp = new ImagePlus("", ip);
-			imp2 = new ImagePlus("tmp");
+			IJ.run(imp, "16-bit", "");
+			imp.setDefault16bitRange(10);
 
 			//Calibration
 			Calibration cal = imp.getCalibration();
+
 			cal.setUnit(unit);
 			cal.pixelWidth = calib;
 			cal.pixelHeight = calib;
-
-			WindowManager.addWindow(imp.getWindow());
-
 			imp.show();
-			//image = camera.getImage();
 			
 			long frames = 0;
 			double frameRate;
@@ -170,128 +159,25 @@ public class thermal_jirou_plugin implements PlugIn {
 			String times = "<timestamps>";
 			boolean timelapseFired = false;
 			
-			
 			//Loop
 			while (!(IJ.escapePressed() || null == imp.getWindow())) 
 			{
-				if (camera.isImageNew()) {
-					
+				if (camera.isImageNew()) {					
 					image = camera.getImage();
+					imp.setImage(image);
+					//IJ.run(imp, "16-bit", "");
+					//IJ.run(imp, "Jet", "");
 
-					//FFT
-					/*
-					if (doFFT) {
-						imp2.setImage(image);
-						ip = imp2.getProcessor();
-						fht = new FHT(pad(ip));
-						fht.setShowProgress(false);
-						fht.transform();
-						ImageProcessor ps = fht.getPowerSpectrum();
-				
-						imp.setProcessor(ps);
-						imp.updateAndDraw();
-						int size = imp.getWidth() / 4;
-						ImageRoi roi = new ImageRoi(0, 0, ip.resize(size, size * ip.getHeight() / ip.getWidth()));
-						imp.setOverlay(roi, Color.BLACK, 1, Color.BLACK);
-					} 
-					*/
-
-					//else
-						 {
-	
-						//Stack
-						imp2.setImage(image);
-						
- 						
-						//IJ.run(imp2,"8-bit","");
-						//if (grab){
-							//IJ.log("grab");
-							//break;
-						//	IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");							
-						//}
-						//IJ.run(imp2, "16 Colors", "");
-						//IJ.run(imp2, "Fire", "");
-
-						ip = imp2.getProcessor();
-						
-						//Escape and Space
-						if (imp.getNSlices() > 1) {
-							imp.getImageStack().setProcessor(ip, imp.getNSlices());
-							imp.setStack("Live (press Escape to finish, Space to add one frame)", imp.getImageStack());
-						} 
-						else {
-							//Running Macro
-							if (doMacro) {
-								if(IJ.escapePressed()) break; 			// to try and avoid the esc key interrupting the macro instead.
-								if (runMacro(macro, imp2))
-									ip = imp2.getProcessor();
-									imp2.saveRoi();
-							}
-
-							imp.setProcessor(ip);
-
-							if (doMacro) 
-								imp.restoreRoi();
-
-							imp.updateAndDraw();
-						}
-
-						//Frame per second
-						if (displayFPS) {
-							frames++;
-							currentTime = Calendar.getInstance().getTimeInMillis();
-							diff = currentTime - initialTime;
-
-							if (diff > 0) {
-								frameRate = (double) frames * 1000;
-								frameRate /= diff;
-							} else
-								frameRate = 0;
-							framerateString = String.format("%.1f fps", frameRate);
-							IJ.showStatus(framerateString);
-						}
-
-						//IJ.showStatus("Thermal Jirou");
-
-						//imp.updateAndDraw();
-						//IJ.showStatus("100");
-						Prefs.set("Cam.newImage", true);
-						
-						//Default Run
-						if ((IJ.shiftKeyDown() && doTimelapse) || (!shiftToStart)) {
-							timelapseFired = true;
-						}
-
-
-						//Stack
-						if (IJ.spaceBarDown()
-								|| (doTimelapse && timelapseFired && (frameTime + interval - Calendar.getInstance()
-										.getTimeInMillis()) < 0) && (imp.getNSlices() < nFrames)) {
-
-							//IJ.log("spaceBarDown");
-							ImageStack imageStack = imp.getImageStack();
-							imageStack.addSlice("", new ColorProcessor(image));
-							frameTime = Calendar.getInstance().getTimeInMillis();
-							imp.setStack("Live (press Escape to finish, Space to add one frame)", imageStack);
-							imp.setSlice(imp.getNSlices());
-							times += "\n" + frameTime;
-
-							imageStack = null;
-							IJ.setKeyUp(KeyEvent.VK_SPACE);
-							if (imp.getNSlices() == nFrames)
-								grab = true;
-						}//IJ.spaceBarDown()
-
-					}//else
+					//Prefs.set("Cam.newImage", true);						
 				}//if (camera.isImageNew())
 			}while (!(IJ.escapePressed() || null == imp.getWindow()))
 
-			imp.setTitle("Snap");
+			//imp.setTitle("Snap");
 
-			frameTime = Calendar.getInstance().getTimeInMillis();
-			times += "\n" + frameTime;
+			//frameTime = Calendar.getInstance().getTimeInMillis();
+			//times += "\n" + frameTime;
 
-			imp.setProperty("Info", times + "\n</timestamps>");
+			//imp.setProperty("Info", times + "\n</timestamps>");
 			camera.close();
 
 			Prefs.set("Webcam.width", width);
@@ -322,7 +208,7 @@ public class thermal_jirou_plugin implements PlugIn {
 	/////////////////////////////////////////////////////////////////////////////
 
 	/***************************************************************************/
-	/* B. Show Dialog()                                                        */
+	/* B. Show Dialog()                                                                          */
 	/***************************************************************************/
 	boolean showDialog() {
 		int n = 0;
@@ -384,11 +270,9 @@ public class thermal_jirou_plugin implements PlugIn {
 		customSize = (boolean) gd.getNextBoolean();
 		width = (int) gd.getNextNumber();
 		height = (int) gd.getNextNumber();
-
 		//unit = (String) gd.getNextString();
 		//calib = (float) gd.getNextNumber();
 		//doTimelapse = gd.getNextBoolean();
-
 		shiftToStart = gd.getNextBoolean();
 		interval = (int) gd.getNextNumber();
 		nFrames = (int) gd.getNextNumber();
