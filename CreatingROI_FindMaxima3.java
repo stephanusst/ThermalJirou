@@ -1,6 +1,7 @@
 /****************************************************** 
 Thermal Jirou Plug In.
 Find Maxima 
+2022-10-16 Lookup Table  JET
 2022-10-08 Ditambahkan AutoThreshold 
 2023-10-06 Ubah steps dialog utk prominence menjadi 1
 2023/10/03 Tambah Lookup table "Fire"
@@ -62,7 +63,7 @@ public class CreatingROI_FindMaxima3 implements PlugIn {
    			  //IJ.run(imp, "Create Selection", "");
 
 	  		  prominence=(int)gd.getNextNumber();
-		          IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+		              IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 			  //IJ.resetThreshold(imp);
 
 			  //ip.drawString(String.valueOf(prominence),30,40);
