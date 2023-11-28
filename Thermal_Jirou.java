@@ -168,35 +168,14 @@ public class Thermal_Jirou implements PlugIn {
 			String framerateString;
 			frameTime = Calendar.getInstance().getTimeInMillis();
 			String times = "<timestamps>";
-			boolean timelapseFired = false;
-			
+			boolean timelapseFired = false;			
 			
 			//Loop
 			while (!(IJ.escapePressed() || null == imp.getWindow())) 
 			{
 				if (camera.isImageNew()) {
-					
 					image = camera.getImage();
 
-					//FFT
-					/*
-					if (doFFT) {
-						imp2.setImage(image);
-						ip = imp2.getProcessor();
-						fht = new FHT(pad(ip));
-						fht.setShowProgress(false);
-						fht.transform();
-						ImageProcessor ps = fht.getPowerSpectrum();
-				
-						imp.setProcessor(ps);
-						imp.updateAndDraw();
-						int size = imp.getWidth() / 4;
-						ImageRoi roi = new ImageRoi(0, 0, ip.resize(size, size * ip.getHeight() / ip.getWidth()));
-						imp.setOverlay(roi, Color.BLACK, 1, Color.BLACK);
-					} 
-					*/
-
-					//else
 						 {
 	
 						//Stack
@@ -426,7 +405,7 @@ public class Thermal_Jirou implements PlugIn {
 
 	/********************************************************************************************/
 	// D. runMacro
-	//    taken from the batch processor
+	//      taken from the batch processor
 	/********************************************************************************************/	
 	private boolean runMacro(String macro, ImagePlus imp) {
 		WindowManager.setTempCurrentImage(imp);

@@ -6,7 +6,7 @@ Find Maxima
 2023-10-06 Ubah steps dialog utk prominence menjadi 1
 2023/10/03 Tambah Lookup table "Fire"
 *******************************************************/
-import ij.*;
+import ij.*; 
 import ij.process.*;
 import ij.gui.*;
 import java.awt.*;
@@ -57,8 +57,6 @@ public class CreatingROI_FindMaxima3 implements PlugIn {
 		
 		DialogListener listener = new DialogListener(){
 		public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
-
-
 			  //IJ.setAutoThreshold(imp, "Default dark no-reset");
    			  //IJ.run(imp, "Create Selection", "");
 
@@ -69,11 +67,12 @@ public class CreatingROI_FindMaxima3 implements PlugIn {
 			  //ip.drawString(String.valueOf(prominence),30,40);
 			  //u=30;v=30;
 			  //p=ip.getPixel(u,v);
-		          //IJ.log(String.valueOf(p));
+		         	  //IJ.log(String.valueOf(p));
 
 			  IJ.run(imp, "16-bit", "");
 			  IJ.run("Jet");
 			  imp.updateAndDraw();
+		  	  //a_beep.beepForAnHour();
             		  return true;
       	 	  }
 		};
@@ -125,28 +124,24 @@ public class CreatingROI_FindMaxima3 implements PlugIn {
 
  	class BeeperControl {
    		private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
 		public void beepForAnHour() {
 			final Runnable beeper = new Runnable() {
        			public void run() { 
-					System.out.println("beep"); 	
-					IJ.beep();
-					IJ.log("beep");
-					IJ.run(imp, "Select None", "");
+				//IJ.beep();
+				IJ.log("beeping");
+				IJ.run(imp, "Select None", "");
 		          		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-			  		IJ.run(imp, "16-bit", "");
-			  		IJ.run("Jet");
-					imp.updateAndDraw();
+			  	IJ.run(imp, "16-bit", "");
+			  	IJ.run("Fire");
+				imp.updateAndDraw();		  
 				}
 			};//Runnable
-
-     			final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 1, 2, SECONDS);
-
+     			final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 1, 1, SECONDS);
      			scheduler.schedule(new Runnable() {
        			public void run() { 
-					beeperHandle.cancel(true); 
+			  beeperHandle.cancel(true); 
 				}
-     			}, 60 * 60, SECONDS);//scheduler
+     			}, 6 * 1, SECONDS);//scheduler
    		}
  	}
 }

@@ -30,7 +30,6 @@ public class CreatingROI_FindMaxima4 implements PlugIn {
 	ImagePlus imp;
 
 	public void run(String arg) {
-
 		////////////////A. Image /////////////////////////////
 
 		//1. Get Image
@@ -38,7 +37,7 @@ public class CreatingROI_FindMaxima4 implements PlugIn {
 
 		//2. Initial	
 		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-		//IJ.resetThreshold(imp);
+		IJ.resetThreshold(imp);
 
 		ImageProcessor ip= imp.getProcessor();
 		ip.snapshot(); //Makes a copy of this image's pixel data that can be later restored using reset() or reset(mask).
@@ -46,12 +45,19 @@ public class CreatingROI_FindMaxima4 implements PlugIn {
 		BeeperControl a_beep = new BeeperControl();
 		a_beep.beepForAnHour();
 		
+		/****************************************************************************************************************
+		// Interface DialogListener
+		// PlugIns or PlugInFilters that want to listen to changes in a GenericDialog without adding listeners 
+		// for each dialog field should implement this method.
+		/ /https://imagej.net/ij/ij/developer/api/ij/ij/gui/DialogListener.html
+		****************************************************************************************************************/
 		DialogListener listener = new DialogListener(){
 		public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
 		  prominence=(int)gd.getNextNumber();
-		  IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-		  //IJ.run(imp, "16-bit", "");
-		  //IJ.run("Fire");
+		  IJ.run(imp, "Select None", "");	
+		  IJ.run(imp, "16-bit", "");
+	  	  IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+		  IJ.run("Fire");
 		  imp.updateAndDraw();
 		  a_beep.beepForAnHour();
             	  return true;
@@ -65,12 +71,12 @@ public class CreatingROI_FindMaxima4 implements PlugIn {
 	}
 
  	class BeeperControl {
-	  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);  //cannot be extended or inherited
 	    public void beepForAnHour() {
 	      final Runnable beeper = new Runnable() {
 	        public void run() { 
-		IJ.beep();
-		IJ.log("beep dalam function");
+		//IJ.beep();
+		//IJ.log("beep dalam function");
 		IJ.run(imp, "Select None", "");
           		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
 	  	IJ.run(imp, "16-bit", "");
@@ -83,9 +89,10 @@ public class CreatingROI_FindMaxima4 implements PlugIn {
      	    scheduler.schedule(new Runnable() {
        	      public void run() { 
 	        beeperHandle.cancel(true); 
-	        IJ.log("Cancel handler");
+	        IJ.log("Stop Find Maxima");
 	      }
      	    }, 6* 1, SECONDS);//scheduler
    	  }//ScheduleExecuterService
 	}//Beeper Control
 }
+
