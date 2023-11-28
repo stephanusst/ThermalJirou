@@ -31,23 +31,14 @@ public class CreatingROI_FindMaxima4 implements PlugIn {
 
 	public void run(String arg) {
 
-		////////////////B. Image /////////////////////////////
+		////////////////A. Image /////////////////////////////
 
-		//B.1. Need Opened Image
-
+		//1. Get Image
 		imp = IJ.getImage();
 
-		//B.1. Automatically Opened
-		//IJ.run(imp, "8-bit", "");
-		//IJ.run("Jet");
-
-	  	//IJ.setAutoThreshold(imp, "Default dark no-reset");
-		//IJ.run(imp, "Create Selection", "");
-
-		//B.2. Initial
-	
+		//2. Initial	
 		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-		IJ.resetThreshold(imp);
+		//IJ.resetThreshold(imp);
 
 		ImageProcessor ip= imp.getProcessor();
 		ip.snapshot(); //Makes a copy of this image's pixel data that can be later restored using reset() or reset(mask).
@@ -57,24 +48,13 @@ public class CreatingROI_FindMaxima4 implements PlugIn {
 		
 		DialogListener listener = new DialogListener(){
 		public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
-
-
-			  //IJ.setAutoThreshold(imp, "Default dark no-reset");
-   			  //IJ.run(imp, "Create Selection", "");
-
-	  		  prominence=(int)gd.getNextNumber();
-		              IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-			  //IJ.resetThreshold(imp);
-
-			  //ip.drawString(String.valueOf(prominence),30,40);
-			  //u=30;v=30;
-			  //p=ip.getPixel(u,v);
-		          //IJ.log(String.valueOf(p));
-
-			  IJ.run(imp, "16-bit", "");
-			  IJ.run("Jet");
-			  imp.updateAndDraw();
-            		  return true;
+		  prominence=(int)gd.getNextNumber();
+		  IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+		  //IJ.run(imp, "16-bit", "");
+		  //IJ.run("Fire");
+		  imp.updateAndDraw();
+		  a_beep.beepForAnHour();
+            	  return true;
       	 	  }
 		};
 
@@ -82,72 +62,30 @@ public class CreatingROI_FindMaxima4 implements PlugIn {
 		gd.addSlider("Prominence", 1, 99, prominence, 1);
      		gd.addDialogListener(listener);
 		gd.showDialog();	
-
-		//IJ.log("Run End");
-		
-		/*
-		//C. Threshold
-		//D. Selection
-		IJ.run(imp, "Select None", "");
-		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-		imp.updateAndDraw();
-	
-		//E. Find Maxima
-		//A. Dialog
-		//GenericDialog gd;
-		gd = new GenericDialog("Find Maxima");
-		gd.addStringField("Title: ", title);
-		gd.addSlider("Prominence", 1,99, 10);
-		gd.showDialog();
-		if (gd.wasCanceled()) return;
-		prominence=(int)gd.getNextNumber();
-		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-  
-		//F. ImageProcessor
-		//ImageProcessor ip = imp.getProcessor(); 
-		// fill a rectangular region with 255 (on grayscale this is white color):  
-		//Roi roi = new Roi(30, 40, 100, 100); // x, y, width, height of the rectangle  
-		//ip.setRoi(roi);  
-		//ip.setValue(255);  
-		//ip.fill(); 	
-
-		imp.updateAndDraw();
-
-		while (!gd.wasCanceled()) {
-	  	  gd.showDialog();
-		  prominence=(int)gd.getNextNumber();
-		  IJ.run(imp, "Select None", "");
-		  IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-		}
-		*/
 	}
 
-
  	class BeeperControl {
-   		private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-		public void beepForAnHour() {
-		  final Runnable beeper = new Runnable() {
-       	    public void run() { 
-			IJ.beep();
-			IJ.log("beep dalam function");
-			IJ.run(imp, "Select None", "");
+	  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	    public void beepForAnHour() {
+	      final Runnable beeper = new Runnable() {
+	        public void run() { 
+		IJ.beep();
+		IJ.log("beep dalam function");
+		IJ.run(imp, "Select None", "");
           		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-	  		IJ.run(imp, "16-bit", "");
-	  		IJ.run("Fire");
-			imp.updateAndDraw();
-		    }
-		 };//Runnable
+	  	IJ.run(imp, "16-bit", "");
+	  	IJ.run("Fire");
+		imp.updateAndDraw();
+		}
+	        };//Runnable
+     	    final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 1, 1, SECONDS);
 
-     			final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 1, 2, SECONDS);
-
-     			scheduler.schedule(new Runnable() {
-       			public void run() { 
-					beeperHandle.cancel(true); 
-				}
-     			}, 60 * 60, SECONDS);//scheduler
-   		}
- 	}
+     	    scheduler.schedule(new Runnable() {
+       	      public void run() { 
+	        beeperHandle.cancel(true); 
+	        IJ.log("Cancel handler");
+	      }
+     	    }, 6* 1, SECONDS);//scheduler
+   	  }//ScheduleExecuterService
+	}//Beeper Control
 }
-
-

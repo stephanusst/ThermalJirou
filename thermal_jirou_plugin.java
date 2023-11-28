@@ -201,7 +201,7 @@ public class thermal_jirou_plugin implements PlugIn {
 	
 						//Stack
 						imp2.setImage(image);
-						
+						IJ.run(imp2, "Select None", "");
  						
 						//IJ.run(imp2,"8-bit","");
 						//if (grab){
