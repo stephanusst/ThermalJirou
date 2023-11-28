@@ -19,7 +19,7 @@ import ij.text.TextPanel;
 import static java.util.concurrent.TimeUnit.*;
 import java.util.concurrent.*;
 
-public class CreatingROI_FindMaxima3 implements PlugIn {
+public class CreatingROI_FindMaxima4 implements PlugIn {
 
 	static String title="Maxima";
 	GenericDialog gd;
@@ -56,7 +56,7 @@ public class CreatingROI_FindMaxima3 implements PlugIn {
 		a_beep.beepForAnHour();
 		
 		DialogListener listener = new DialogListener(){
-		 public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
+		public boolean dialogItemChanged(GenericDialog gd, AWTEvent event){
 
 
 			  //IJ.setAutoThreshold(imp, "Default dark no-reset");
@@ -127,25 +127,25 @@ public class CreatingROI_FindMaxima3 implements PlugIn {
    		private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 		public void beepForAnHour() {
-			final Runnable beeper = new Runnable() {
-       			public void run() { 
-					System.out.println("beep"); 	
-					IJ.beep();
-					IJ.log("beep");
-					IJ.run(imp, "Select None", "");
-		          		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
-			  		IJ.run(imp, "16-bit", "");
-			  		IJ.run("Jet");
-					imp.updateAndDraw();
-				}
-			};
+		  final Runnable beeper = new Runnable() {
+       	    public void run() { 
+			IJ.beep();
+			IJ.log("beep dalam function");
+			IJ.run(imp, "Select None", "");
+          		IJ.run(imp, "Find Maxima...", "prominence="+prominence+" exclude output=[Point Selection]");
+	  		IJ.run(imp, "16-bit", "");
+	  		IJ.run("Fire");
+			imp.updateAndDraw();
+		    }
+		 };//Runnable
 
      			final ScheduledFuture<?> beeperHandle = scheduler.scheduleAtFixedRate(beeper, 1, 2, SECONDS);
+
      			scheduler.schedule(new Runnable() {
        			public void run() { 
 					beeperHandle.cancel(true); 
 				}
-     			}, 60 * 60, SECONDS);
+     			}, 60 * 60, SECONDS);//scheduler
    		}
  	}
 }
